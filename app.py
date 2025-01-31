@@ -72,8 +72,6 @@ class Group(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(100), nullable=False)
     description = db.Column(db.String(255), nullable=True)
-
-    # Отношение к расписанию
     schedules = db.relationship('Schedule', backref='group', lazy=True)
 
 
@@ -302,7 +300,7 @@ def delete_student(student_id):
     return redirect(url_for('group_students', group_id=student.group_id))
 
 
-# Для создания и управления группами (GET и POST)
+# Для создания и управления группами
 @app.route('/admin/groups', methods=['GET', 'POST'])
 @login_required
 @role_required('admin')
@@ -380,7 +378,6 @@ def group_students(group_id):
 
 
 
-#админ все
 
 #преподаватели
 @app.route('/teacher/schedule/add', methods=['GET', 'POST'])
@@ -404,7 +401,6 @@ def teacher_add_schedule():
         flash('Занятие добавлено.', 'success')
         return redirect(url_for('teacher_schedule'))
     return render_template('add_schedule.html', form=form)
-#преподаватели все
 
 #студенты
 @app.route('/student/schedule', methods=['GET'])
@@ -413,10 +409,6 @@ def teacher_add_schedule():
 def student_schedule():
     schedules = Schedule.query.filter(Schedule.group_id.in_([g.id for g in current_user.groups])).all()
     return render_template('student_schedule.html', schedules=schedules)
-
-
-#студенты все
-
 
 
 if __name__ == '__main__':
